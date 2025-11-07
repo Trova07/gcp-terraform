@@ -1,0 +1,9 @@
+.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
+override.tf
+override.tf.json
+.terraform.lock.hcl
+service-account-key.json
+terraform.tfvars
