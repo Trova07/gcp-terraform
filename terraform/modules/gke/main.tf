@@ -1,10 +1,10 @@
-variable "cluster_name" { type = string }
-variable "project_id" { type = string }
-variable "region" { type = string }
-variable "network" { type = string } # VPC self link
-variable "subnetwork" { type = string } # Subnet name
-variable "pods_secondary_range_name" { type = string }
-variable "services_secondary_range_name" { type = string }
+variable "cluster_name" { type = string }                   # GKE 클러스터 이름
+variable "project_id" { type = string }                    # 대상 프로젝트
+variable "region" { type = string }                        # 리전(Regional 클러스터 위치)
+variable "network" { type = string } # VPC self link       # VPC 참조
+variable "subnetwork" { type = string } # Subnet name      # 서브넷 이름
+variable "pods_secondary_range_name" { type = string }     # 파드용 세컨더리 대역 이름
+variable "services_secondary_range_name" { type = string } # 서비스용 세컨더리 대역 이름
 variable "release_channel" {
   type    = string
   default = "REGULAR"
@@ -15,6 +15,7 @@ variable "master_ipv4_cidr" {
 }
 
 resource "google_container_cluster" "this" {
+  # IP Alias 및 Managed Prometheus가 활성화된 Regional Private GKE Standard 클러스터
   name                      = var.cluster_name
   project                   = var.project_id
   location                  = var.region
@@ -27,7 +28,7 @@ resource "google_container_cluster" "this" {
     channel = var.release_channel
   }
 
-  networking_mode = "VPC_NATIVE"
+  networking_mode = "VPC_NATIVE" # IP Alias 사용을 위해 필수
   ip_allocation_policy {
     cluster_secondary_range_name  = var.pods_secondary_range_name
     services_secondary_range_name = var.services_secondary_range_name
@@ -63,6 +64,7 @@ resource "google_container_cluster" "this" {
 }
 
 resource "google_container_node_pool" "default" {
+  # 오토스케일링·머신 타입 제어를 위해 분리 관리되는 기본 노드 풀
   name       = "default-pool"
   project    = var.project_id
   location   = var.region
@@ -70,7 +72,7 @@ resource "google_container_node_pool" "default" {
 
   node_config {
     machine_type = "e2-standard-4"
-    oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+    oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"] # 범위가 넓음 → 세밀 권한은 Workload Identity 권장
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
@@ -91,6 +93,6 @@ resource "google_container_node_pool" "default" {
   }
 }
 
-output "name" { value = google_container_cluster.this.name }
-output "endpoint" { value = google_container_cluster.this.endpoint }
-output "ca_certificate" { value = google_container_cluster.this.master_auth[0].cluster_ca_certificate }
+output "name" { value = google_container_cluster.this.name }                            # 클러스터 이름
+output "endpoint" { value = google_container_cluster.this.endpoint }                    # API 서버 엔드포인트
+output "ca_certificate" { value = google_container_cluster.this.master_auth[0].cluster_ca_certificate } # kubeconfig 구성용
