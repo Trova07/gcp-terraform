@@ -7,3 +7,4 @@ override.tf.json
 .terraform.lock.hcl
 service-account-key.json
 terraform.tfvars
+old_project_backup/
