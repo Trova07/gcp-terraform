@@ -1,0 +1,15 @@
+# Credentials (절대 커밋하면 안됨!)
+.credentials/
+*.json
+!package.json
+!package-lock.json
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/old_project_backup/
+
+# OS
+.DS_Store
+Thumbs.db
