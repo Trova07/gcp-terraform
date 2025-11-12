@@ -1,6 +1,7 @@
 variable "project_id" {
   description = "Existing GCP Project ID"
   type        = string
+  default = "gcp-terraform-2025-11-12"
 }
 
 variable "region" {
