@@ -36,7 +36,7 @@
 ## 현재 상태 점검(빠른 확인)
 ```bash
 # gcloud가 인식 중인 프로젝트 확인
-gcloud config list --format="value(core.project)"   # => clean-pen-471811-t0
+gcloud config list --format="value(core.project)"   # => gcp-terraform-2025-11-12
 
 # ADC 파일(로컬 사용자 자격증명) 쿼터 프로젝트 설정 완료
 grep quotaProject ~/.config/gcloud/application_default_credentials.json || true
@@ -76,7 +76,7 @@ terraform apply -var-file=terraform.tfvars
 ```bash
 gcloud container clusters get-credentials gke-primary \
   --region asia-northeast3 \
-  --project clean-pen-471811-t0
+  --project gcp-terraform-2025-11-12
 
 kubectl get nodes -o wide
 kubectl get pods -A
@@ -105,7 +105,7 @@ kubectl get pods -A
 - 라벨 추가(일부 환경에선 alpha 필요):
 ```bash
 # 필요 시 alpha 설치: sudo apt-get install -y google-cloud-cli-alpha
-gcloud alpha projects update clean-pen-471811-t0 \
+gcloud alpha projects update gcp-terraform-2025-11-12 \
   --update-labels environment=development,purpose=education
 ```
 - 태그(Resource Manager Tags) 바인딩은 정책 목적일 때만:
